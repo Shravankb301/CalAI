@@ -3,6 +3,13 @@ import { parse } from 'date-fns'
 import { ParsedCommand } from '@/types/calendar'
 
 export function parseCommand(input: string): ParsedCommand {
+  if (!input || typeof input !== 'string') {
+    return {
+      action: 'error',
+      error: 'Invalid input: command must be a string'
+    }
+  }
+  
   const lowerCommand = input.toLowerCase()
   
   // Basic command parsing

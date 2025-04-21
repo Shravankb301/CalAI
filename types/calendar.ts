@@ -20,14 +20,14 @@ export interface APIEvent extends BaseEvent {
 
 // Command parsing result
 export interface ParsedCommand {
-  action: 'add' | 'remove' | 'update' | 'view'
+  action: 'add' | 'remove' | 'update' | 'view' | 'error'
   event?: Omit<CalendarEvent, 'id'>  // id is generated after parsing
   error?: string
 }
 
 // API response format
 export interface APIResponse {
-  action: 'add' | 'remove' | 'update' | 'view'
+  action: 'add' | 'remove' | 'update' | 'view' | 'error'
   event?: APIEvent
   error?: string
 }

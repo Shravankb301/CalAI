@@ -2,63 +2,60 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: 0 0% 100%;
-  --foreground: 224 71.4% 4.1%;
-  --card: 0 0% 100%;
-  --card-foreground: 224 71.4% 4.1%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 224 71.4% 4.1%;
-  --primary: 262.1 83.3% 57.8%;
-  --primary-foreground: 210 20% 98%;
-  --secondary: 220 14.3% 95.9%;
-  --secondary-foreground: 220.9 39.3% 11%;
-  --muted: 220 14.3% 95.9%;
-  --muted-foreground: 220 8.9% 46.1%;
-  --accent: 220 14.3% 95.9%;
-  --accent-foreground: 220.9 39.3% 11%;
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 210 20% 98%;
-  --border: 220 13% 91%;
-  --input: 220 13% 91%;
-  --ring: 262.1 83.3% 57.8%;
-  --radius: 0.75rem;
-  --foreground-rgb: 0, 0, 0;
-  --background-rgb: 255, 255, 255;
-  --calendar-blue: #3b82f6;
-  --calendar-blue-dark: #2563eb;
-  --calendar-light: #eff6ff;
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 224.3 76.3% 48%;
+  }
 }
 
-.dark {
-  --background: 224 71.4% 4.1%;
-  --foreground: 210 20% 98%;
-  --card: 224 71.4% 4.1%;
-  --card-foreground: 210 20% 98%;
-  --popover: 224 71.4% 4.1%;
-  --popover-foreground: 210 20% 98%;
-  --primary: 263.4 70% 50.4%;
-  --primary-foreground: 210 20% 98%;
-  --secondary: 215 27.9% 16.9%;
-  --secondary-foreground: 210 20% 98%;
-  --muted: 215 27.9% 16.9%;
-  --muted-foreground: 217.9 10.6% 64.9%;
-  --accent: 215 27.9% 16.9%;
-  --accent-foreground: 210 20% 98%;
-  --destructive: 0 62.8% 30.6%;
-  --destructive-foreground: 210 20% 98%;
-  --border: 215 27.9% 16.9%;
-  --input: 215 27.9% 16.9%;
-  --ring: 263.4 70% 50.4%;
-}
-
-* {
-  border-color: hsl(var(--border));
-}
-
-body {
-  background-color: hsl(var(--background));
-  color: hsl(var(--foreground));
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }
 
 /* Animations */
@@ -92,8 +89,9 @@ body {
 
 /* Custom styles for react-big-calendar */
 .rbc-calendar {
+  width: 100%;
   height: 100%;
-  min-height: 600px;
+  min-height: 580px;
   font-family: system-ui, -apple-system, sans-serif;
   border-radius: var(--radius);
   overflow: hidden;
@@ -131,28 +129,20 @@ body {
   background: hsl(var(--primary)/0.9);
 }
 
-.rbc-time-view {
-  border: none;
-  background: hsl(var(--card));
+.rbc-time-view, .rbc-month-view {
+  background-color: hsl(var(--card));
+  border-radius: var(--radius);
+  border: 1px solid hsl(var(--border));
 }
 
 .rbc-time-header {
-  border-bottom: 1px solid hsl(var(--border));
-  background: transparent;
-}
-
-.rbc-header {
-  padding: 0.75rem;
-  font-weight: 600;
-  border-color: hsl(var(--border));
-}
-
-.rbc-time-header-content {
-  border-color: hsl(var(--border));
+  border-top-left-radius: var(--radius);
+  border-top-right-radius: var(--radius);
 }
 
 .rbc-time-content {
-  border-color: hsl(var(--border));
+  border-bottom-left-radius: var(--radius);
+  border-bottom-right-radius: var(--radius);
 }
 
 .rbc-today {
@@ -183,6 +173,28 @@ body {
 .rbc-current-time-indicator {
   background-color: hsl(var(--primary));
   height: 2px;
+}
+
+/* Chat styles */
+.chat-message {
+  position: relative;
+  margin-bottom: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  transition: all 0.2s ease;
+}
+
+.chat-message.user {
+  background-color: hsl(var(--primary)/0.15);
+  color: hsl(var(--primary));
+  margin-left: auto;
+}
+
+.chat-message.assistant {
+  background-color: hsl(var(--muted));
+  color: hsl(var(--muted-foreground));
 }
 
 /* Chat message animations */
@@ -220,24 +232,20 @@ body {
   opacity: 1;
 }
 
-/* Chat styles */
-.chat-message {
+/* Calendar Specific Styles */
+.rbc-calendar * {
+  transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+
+/* Fix for initial loading */
+.rbc-time-column {
   position: relative;
-  margin-bottom: 0.5rem;
-  padding: 0.75rem 1rem;
-  border-radius: var(--radius);
-  font-size: 0.875rem;
-  line-height: 1.5;
-  transition: all 0.2s ease;
 }
 
-.chat-message.user {
-  background-color: hsl(var(--primary)/0.15);
-  color: hsl(var(--primary));
-  margin-left: auto;
-}
-
-.chat-message.assistant {
-  background-color: hsl(var(--muted));
-  color: hsl(var(--muted-foreground));
+.rbc-events-container {
+  position: absolute;
+  z-index: 2;
+  width: 100%;
+  top: 0;
+  bottom: 0;
 }

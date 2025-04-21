@@ -4,7 +4,16 @@ import { APIResponse, toAPIEvent } from '@/types/calendar'
 
 export async function POST(request: Request) {
   try {
-    const { message } = await request.json()
+    const body = await request.json()
+    
+    if (!body || typeof body.message !== 'string') {
+      return NextResponse.json({ 
+        action: 'error',
+        error: 'Invalid request: message is required'
+      })
+    }
+    
+    const { message } = body
     const parsedCommand = parseCommand(message)
 
     const response: APIResponse = {

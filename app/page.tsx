@@ -26,104 +26,167 @@ const calendarStyles = {
   backgroundColor: 'transparent',
   border: 'none',
   fontFamily: 'inherit',
-  '.rbcHeader': {
-    padding: '1rem 0',
+  rbcHeader: {
+    padding: '1.25rem 0',
     fontWeight: '600',
     textTransform: 'none',
     borderBottom: '1px solid var(--border)',
     color: 'var(--foreground)',
+    fontSize: '0.95rem',
   },
-  '.rbcTimeHeader': {
+  rbcTimeHeader: {
     backgroundColor: 'var(--card)',
     borderColor: 'var(--border)',
+    boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
   },
-  '.rbcTimeContent': {
+  rbcTimeContent: {
     backgroundColor: 'var(--card)',
     borderColor: 'var(--border)',
+    scrollbarWidth: 'thin',
+    scrollbarColor: 'var(--border) transparent',
+    '&::-webkit-scrollbar': {
+      width: '6px',
+    },
+    '&::-webkit-scrollbar-track': {
+      background: 'transparent',
+    },
+    '&::-webkit-scrollbar-thumb': {
+      background: 'var(--border)',
+      borderRadius: '3px',
+    },
+    '& > * + * > *': {
+      borderLeft: '1px solid var(--border)',
+    },
   },
-  '.rbcTimeView': {
+  rbcTimeView: {
     border: '1px solid var(--border)',
-    borderRadius: '0.75rem',
+    borderRadius: '1rem',
     overflow: 'hidden',
     backgroundColor: 'var(--card)',
+    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
   },
-  '.rbcToday': {
+  rbcToday: {
     backgroundColor: 'var(--muted)',
+    position: 'relative',
+    '&::after': {
+      content: '""',
+      position: 'absolute',
+      bottom: '0',
+      left: '0',
+      right: '0',
+      height: '2px',
+      background: 'var(--primary)',
+      opacity: '0.5',
+    },
   },
-  '.rbcCurrentTimeIndicator': {
+  rbcCurrentTimeIndicator: {
     backgroundColor: 'var(--primary)',
-    height: '2px',
+    height: '3px',
+    boxShadow: '0 0 4px var(--primary)',
   },
-  '.rbcEvent': {
+  rbcEvent: {
     backgroundColor: 'var(--primary)',
     borderRadius: '0.5rem',
     border: 'none',
-    padding: '0.25rem 0.5rem',
+    padding: '0.5rem 0.75rem',
     fontSize: '0.875rem',
-    transition: 'all 0.2s',
+    transition: 'all 0.2s ease-in-out',
     opacity: '0.9',
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
     '&:hover': {
       opacity: '1',
       transform: 'scale(1.02)',
+      boxShadow: '0 4px 6px rgba(0, 0, 0, 0.15)',
     },
   },
-  '.rbcTimeSlot': {
+  rbcTimeSlot: {
     color: 'var(--muted-foreground)',
     fontSize: '0.875rem',
     borderTop: '1px solid var(--border)',
-  },
-  '.rbcTimeslotGroup': {
-    borderBottom: '1px solid var(--border)',
-    minHeight: '80px',
-  },
-  '.rbcTimeGutter .rbcTimeslotGroup': {
-    borderRight: '1px solid var(--border)',
-  },
-  '.rbcTimeColumn': {
-    borderLeft: '1px solid var(--border)',
-  },
-  '.rbcDaySlot .rbcTimeSlot': {
-    borderTop: '1px solid var(--border)',
-    opacity: '0.7',
-  },
-  '.rbcTimeHeaderContent': {
-    borderLeft: '1px solid var(--border)',
-  },
-  '.rbcTimeHeaderGutter': {
-    backgroundColor: 'var(--card)',
-  },
-  '.rbcTime': {
-    backgroundColor: 'var(--card)',
-  },
-  '.rbcDayBg': {
-    backgroundColor: 'var(--card)',
-  },
-  '.rbcOffRangeBg': {
-    backgroundColor: 'var(--muted)',
-  },
-  '.rbcOffRange': {
-    color: 'var(--muted-foreground)',
-  },
-  '.rbcTimeContent > * + * > *': {
-    borderLeft: '1px solid var(--border)',
-  },
-  '.rbcToolbar button': {
-    color: 'var(--foreground)',
-    borderColor: 'var(--border)',
-    backgroundColor: 'transparent',
+    padding: '0.5rem 0.75rem',
     '&:hover': {
       backgroundColor: 'var(--muted)',
-      borderColor: 'var(--border)',
-      color: 'var(--foreground)',
     },
-    '&.rbcActive': {
-      backgroundColor: 'var(--primary)',
-      borderColor: 'var(--primary)',
-      color: 'var(--primary-foreground)',
+  },
+  rbcTimeslotGroup: {
+    borderBottom: '1px solid var(--border)',
+    minHeight: '90px',
+  },
+  rbcTimeGutter: {
+    borderRight: '1px solid var(--border)',
+    paddingRight: '0.75rem',
+  },
+  rbcTimeColumn: {
+    borderLeft: '1px solid var(--border)',
+  },
+  rbcDaySlot: {
+    borderTop: '1px solid var(--border)',
+    opacity: '0.8',
+  },
+  rbcTimeHeaderContent: {
+    borderLeft: '1px solid var(--border)',
+  },
+  rbcTimeHeaderGutter: {
+    backgroundColor: 'var(--card)',
+  },
+  rbcTime: {
+    backgroundColor: 'var(--card)',
+  },
+  rbcDayBg: {
+    backgroundColor: 'var(--card)',
+  },
+  rbcOffRangeBg: {
+    backgroundColor: 'var(--muted)',
+    opacity: '0.3',
+  },
+  rbcOffRange: {
+    color: 'var(--muted-foreground)',
+    opacity: '0.5',
+  },
+  rbcToolbar: {
+    padding: '1rem',
+    borderBottom: '1px solid var(--border)',
+    marginBottom: '0',
+    button: {
+      color: 'var(--foreground)',
+      borderColor: 'var(--border)',
+      backgroundColor: 'transparent',
+      padding: '0.5rem 1rem',
+      borderRadius: '0.5rem',
+      transition: 'all 0.2s ease-in-out',
       '&:hover': {
+        backgroundColor: 'var(--muted)',
+        borderColor: 'var(--border)',
+        color: 'var(--foreground)',
+        transform: 'translateY(-1px)',
+      },
+      '&.rbcActive': {
         backgroundColor: 'var(--primary)',
         borderColor: 'var(--primary)',
         color: 'var(--primary-foreground)',
+        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+        '&:hover': {
+          backgroundColor: 'var(--primary)',
+          borderColor: 'var(--primary)',
+          color: 'var(--primary-foreground)',
+          transform: 'translateY(-1px)',
+        },
+      },
+    },
+  },
+  '@media': {
+    '(maxWidth: 768px)': {
+      rbcTimeSlot: {
+        padding: '0.25rem 0.5rem',
+        fontSize: '0.75rem',
+      },
+      rbcEvent: {
+        padding: '0.25rem 0.5rem',
+        fontSize: '0.75rem',
+      },
+      rbcHeader: {
+        padding: '0.75rem 0',
+        fontSize: '0.85rem',
       },
     },
   },
@@ -438,6 +501,9 @@ export default function Home() {
                   onSelectSlot={handleSelectSlot}
                   onSelectEvent={handleEventSelect}
                   tooltipAccessor={event => `${event.title}\n${format(event.start, 'PPp')} - ${format(event.end, 'PPp')}`}
+                  min={new Date(0, 0, 0, 0, 0, 0)}
+                  max={new Date(0, 0, 0, 23, 59, 59)}
+                  defaultDate={new Date()}
                 />
               </div>
             </div>
