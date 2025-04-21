@@ -1,26 +1,243 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: 0 0% 100%;
+  --foreground: 224 71.4% 4.1%;
+  --card: 0 0% 100%;
+  --card-foreground: 224 71.4% 4.1%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 224 71.4% 4.1%;
+  --primary: 262.1 83.3% 57.8%;
+  --primary-foreground: 210 20% 98%;
+  --secondary: 220 14.3% 95.9%;
+  --secondary-foreground: 220.9 39.3% 11%;
+  --muted: 220 14.3% 95.9%;
+  --muted-foreground: 220 8.9% 46.1%;
+  --accent: 220 14.3% 95.9%;
+  --accent-foreground: 220.9 39.3% 11%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 20% 98%;
+  --border: 220 13% 91%;
+  --input: 220 13% 91%;
+  --ring: 262.1 83.3% 57.8%;
+  --radius: 0.75rem;
+  --foreground-rgb: 0, 0, 0;
+  --background-rgb: 255, 255, 255;
+  --calendar-blue: #3b82f6;
+  --calendar-blue-dark: #2563eb;
+  --calendar-light: #eff6ff;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+.dark {
+  --background: 224 71.4% 4.1%;
+  --foreground: 210 20% 98%;
+  --card: 224 71.4% 4.1%;
+  --card-foreground: 210 20% 98%;
+  --popover: 224 71.4% 4.1%;
+  --popover-foreground: 210 20% 98%;
+  --primary: 263.4 70% 50.4%;
+  --primary-foreground: 210 20% 98%;
+  --secondary: 215 27.9% 16.9%;
+  --secondary-foreground: 210 20% 98%;
+  --muted: 215 27.9% 16.9%;
+  --muted-foreground: 217.9 10.6% 64.9%;
+  --accent: 215 27.9% 16.9%;
+  --accent-foreground: 210 20% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 210 20% 98%;
+  --border: 215 27.9% 16.9%;
+  --input: 215 27.9% 16.9%;
+  --ring: 263.4 70% 50.4%;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  border-color: hsl(var(--border));
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
+
+/* Animations */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-slide-in {
+  animation: slideIn 0.2s ease-out;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Custom styles for react-big-calendar */
+.rbc-calendar {
+  height: 100%;
+  min-height: 600px;
+  font-family: system-ui, -apple-system, sans-serif;
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.rbc-toolbar {
+  padding: 1.25rem;
+  margin-bottom: 0;
+  background: transparent;
+  border-bottom: 1px solid hsl(var(--border));
+}
+
+.rbc-toolbar button {
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius);
+  color: hsl(var(--foreground));
+  border: 1px solid hsl(var(--border));
+  background: transparent;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.rbc-toolbar button:hover {
+  background: hsl(var(--accent));
+  border-color: hsl(var(--border));
+}
+
+.rbc-toolbar button.rbc-active {
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  border-color: hsl(var(--primary));
+}
+
+.rbc-toolbar button.rbc-active:hover {
+  background: hsl(var(--primary)/0.9);
+}
+
+.rbc-time-view {
+  border: none;
+  background: hsl(var(--card));
+}
+
+.rbc-time-header {
+  border-bottom: 1px solid hsl(var(--border));
+  background: transparent;
+}
+
+.rbc-header {
+  padding: 0.75rem;
+  font-weight: 600;
+  border-color: hsl(var(--border));
+}
+
+.rbc-time-header-content {
+  border-color: hsl(var(--border));
+}
+
+.rbc-time-content {
+  border-color: hsl(var(--border));
+}
+
+.rbc-today {
+  background-color: hsl(var(--accent)/0.2);
+}
+
+.rbc-event {
+  padding: 0.5rem 0.75rem;
+  background-color: hsl(var(--primary)/0.15);
+  border: 1px solid hsl(var(--primary)/0.3);
+  border-radius: calc(var(--radius) - 0.25rem);
+  color: hsl(var(--primary));
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+}
+
+.rbc-event:hover {
+  background-color: hsl(var(--primary)/0.2);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px hsl(var(--primary)/0.1);
+}
+
+.rbc-time-slot {
+  color: hsl(var(--muted-foreground));
+  font-size: 0.875rem;
+}
+
+.rbc-current-time-indicator {
+  background-color: hsl(var(--primary));
+  height: 2px;
+}
+
+/* Chat message animations */
+.chat-message-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.chat-message-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms, transform 300ms;
+}
+
+/* Input focus styles */
+.focus-ring {
+  position: relative;
+}
+
+.focus-ring:after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: calc(var(--radius) + 2px);
+  border: 2px solid transparent;
+  background: linear-gradient(to right, hsl(var(--primary)), hsl(var(--primary)/0.5)) border-box;
+  -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.focus-ring:focus-within:after {
+  opacity: 1;
+}
+
+/* Chat styles */
+.chat-message {
+  position: relative;
+  margin-bottom: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  transition: all 0.2s ease;
+}
+
+.chat-message.user {
+  background-color: hsl(var(--primary)/0.15);
+  color: hsl(var(--primary));
+  margin-left: auto;
+}
+
+.chat-message.assistant {
+  background-color: hsl(var(--muted));
+  color: hsl(var(--muted-foreground));
 }
