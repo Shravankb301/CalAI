@@ -30,29 +30,29 @@ const calendarStyles = {
     padding: '1rem 0',
     fontWeight: '600',
     textTransform: 'none',
-    borderBottom: 'none',
+    borderBottom: '1px solid var(--border)',
+    color: 'var(--foreground)',
   },
   '.rbcTimeHeader': {
-    borderRadius: '0.75rem 0.75rem 0 0',
-    backgroundColor: 'var(--muted)',
+    backgroundColor: 'var(--card)',
     borderColor: 'var(--border)',
   },
   '.rbcTimeContent': {
-    borderRadius: '0 0 0.75rem 0.75rem',
     backgroundColor: 'var(--card)',
     borderColor: 'var(--border)',
   },
   '.rbcTimeView': {
-    border: 'none',
+    border: '1px solid var(--border)',
     borderRadius: '0.75rem',
     overflow: 'hidden',
-    boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
+    backgroundColor: 'var(--card)',
   },
   '.rbcToday': {
     backgroundColor: 'var(--muted)',
   },
   '.rbcCurrentTimeIndicator': {
     backgroundColor: 'var(--primary)',
+    height: '2px',
   },
   '.rbcEvent': {
     backgroundColor: 'var(--primary)',
@@ -61,86 +61,138 @@ const calendarStyles = {
     padding: '0.25rem 0.5rem',
     fontSize: '0.875rem',
     transition: 'all 0.2s',
+    opacity: '0.9',
     '&:hover': {
+      opacity: '1',
       transform: 'scale(1.02)',
     },
   },
   '.rbcTimeSlot': {
     color: 'var(--muted-foreground)',
+    fontSize: '0.875rem',
+    borderTop: '1px solid var(--border)',
   },
   '.rbcTimeslotGroup': {
-    borderColor: 'var(--border)',
+    borderBottom: '1px solid var(--border)',
+    minHeight: '80px',
   },
   '.rbcTimeGutter .rbcTimeslotGroup': {
-    borderColor: 'transparent',
+    borderRight: '1px solid var(--border)',
+  },
+  '.rbcTimeColumn': {
+    borderLeft: '1px solid var(--border)',
+  },
+  '.rbcDaySlot .rbcTimeSlot': {
+    borderTop: '1px solid var(--border)',
+    opacity: '0.7',
+  },
+  '.rbcTimeHeaderContent': {
+    borderLeft: '1px solid var(--border)',
+  },
+  '.rbcTimeHeaderGutter': {
+    backgroundColor: 'var(--card)',
+  },
+  '.rbcTime': {
+    backgroundColor: 'var(--card)',
+  },
+  '.rbcDayBg': {
+    backgroundColor: 'var(--card)',
+  },
+  '.rbcOffRangeBg': {
+    backgroundColor: 'var(--muted)',
+  },
+  '.rbcOffRange': {
+    color: 'var(--muted-foreground)',
+  },
+  '.rbcTimeContent > * + * > *': {
+    borderLeft: '1px solid var(--border)',
+  },
+  '.rbcToolbar button': {
+    color: 'var(--foreground)',
+    borderColor: 'var(--border)',
+    backgroundColor: 'transparent',
+    '&:hover': {
+      backgroundColor: 'var(--muted)',
+      borderColor: 'var(--border)',
+      color: 'var(--foreground)',
+    },
+    '&.rbcActive': {
+      backgroundColor: 'var(--primary)',
+      borderColor: 'var(--primary)',
+      color: 'var(--primary-foreground)',
+      '&:hover': {
+        backgroundColor: 'var(--primary)',
+        borderColor: 'var(--primary)',
+        color: 'var(--primary-foreground)',
+      },
+    },
   },
 }
 
 export default function Home() {
   const [events, setEvents] = useState<CalendarEvent[]>([])
   const [message, setMessage] = useState('')
-  const [chatHistory, setChatHistory] = useState<{ role: 'user' | 'assistant', content: string; timestamp?: Date }[]>([])
+  const [messages, setMessages] = useState<Array<{ role: 'user' | 'assistant', content: string }>>([
+    {
+      role: 'assistant',
+      content: "Hi! I'm your personal scheduling assistant. How can I help organize your day today? You can tell me about events you'd like to add, or I can help you review your schedule."
+    }
+  ])
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [isSending, setIsSending] = useState(false)
   const chatEndRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [chatHistory])
+  }, [messages])
 
   const handleSendMessage = async () => {
-    const trimmedMessage = message.trim()
-    if (!trimmedMessage || isSending) return
-
+    if (!message.trim() || isLoading) return
+    
+    const userMessage = message.trim()
+    setMessage('')
+    setIsLoading(true)
+    
+    // Add user message to chat
+    setMessages(prev => [...prev, { role: 'user', content: userMessage }])
+    
     try {
-      setIsSending(true)
-      setChatHistory(prev => [...prev, { role: 'user', content: trimmedMessage, timestamp: new Date() }])
-      setMessage('')
-
-      const response = await fetch('/api/chat', {
+      // Process the message and extract event information
+      const response = await fetch('/api/process-message', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: trimmedMessage }),
+        body: JSON.stringify({ message: userMessage })
       })
-
-      if (!response.ok) {
-        throw new Error('Failed to send message')
-      }
-
+      
       const data = await response.json()
-      setChatHistory(prev => [...prev, { role: 'assistant', content: data.response, timestamp: new Date() }])
+      
+      if (data.events) {
+        // Add the events to the calendar
+        const newEvents = data.events.map((event: APIEvent) => toCalendarEvent(event))
+        setEvents(prev => [...prev, ...newEvents])
+      }
+      
+      // Add assistant's response to chat
+      setMessages(prev => [...prev, { role: 'assistant', content: data.response }])
     } catch (error) {
-      console.error('Error sending message:', error)
-      setChatHistory(prev => [
-        ...prev, 
-        { 
-          role: 'assistant', 
-          content: 'Sorry, I encountered an error. Please try again.', 
-          timestamp: new Date() 
-        }
-      ])
+      console.error('Error processing message:', error)
+      setMessages(prev => [...prev, { 
+        role: 'assistant', 
+        content: "I'm sorry, I encountered an error while processing your request. Could you please try again?" 
+      }])
     } finally {
-      setIsSending(false)
+      setIsLoading(false)
     }
   }
 
   const handleSelectSlot = async (slotInfo: { start: Date; end: Date }) => {
     try {
-      const title = prompt('Enter event title:')
-      if (!title) return
-
       setIsLoading(true)
       const response = await fetch('/api/calendar', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          action: 'add',
-          event: {
-            title,
-            start: slotInfo.start.toISOString(),
-            end: slotInfo.end.toISOString(),
-          },
+          message: `add event from ${format(slotInfo.start, 'h:mm a')} to ${format(slotInfo.end, 'h:mm a')} on ${format(slotInfo.start, 'EEEE, MMMM d')}`
         }),
       })
 
@@ -154,25 +206,11 @@ export default function Home() {
       }
 
       if (data.event) {
-        const newEvent: CalendarEvent = {
-          id: crypto.randomUUID(),
-          title: data.event.title,
-          start: new Date(data.event.start),
-          end: new Date(data.event.end),
-          description: data.event.description,
-        }
-        setEvents([...events, newEvent])
-        setChatHistory([
-          ...chatHistory,
-          { role: 'assistant', content: `Event "${title}" has been added to your calendar.` },
-        ])
+        const newEvent = toCalendarEvent(data.event)
+        setEvents(prev => [...prev, newEvent])
       }
     } catch (error) {
       console.error('Error creating event:', error)
-      setChatHistory([
-        ...chatHistory,
-        { role: 'assistant', content: `Failed to create event: ${error instanceof Error ? error.message : 'Unknown error'}` },
-      ])
     } finally {
       setIsLoading(false)
     }
@@ -214,16 +252,8 @@ export default function Home() {
 
       setEvents(events.filter(e => e.id !== event.id))
       setSelectedEvent(null)
-      setChatHistory([
-        ...chatHistory,
-        { role: 'assistant', content: `Event "${event.title}" has been deleted.` },
-      ])
     } catch (error) {
       console.error('Error deleting event:', error)
-      setChatHistory([
-        ...chatHistory,
-        { role: 'assistant', content: `Failed to delete event: ${error instanceof Error ? error.message : 'Unknown error'}` },
-      ])
     } finally {
       setIsLoading(false)
     }
@@ -275,39 +305,25 @@ export default function Home() {
               <h2 className="text-lg font-semibold text-primary">Chat</h2>
             </div>
             <div className="flex-1 p-4 overflow-y-auto space-y-4">
-              {chatHistory.map((msg, i) => (
+              {messages.map((msg, i) => (
                 <div
                   key={i}
                   className={cn(
-                    'flex gap-2 items-start',
-                    msg.role === 'assistant' ? 'flex-row' : 'flex-row-reverse'
+                    "flex items-start space-x-2",
+                    msg.role === 'user' ? 'justify-end' : 'justify-start'
                   )}
                 >
-                  <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-                    {msg.role === 'assistant' ? (
-                      <Bot className="h-4 w-4 text-primary" />
-                    ) : (
-                      <User className="h-4 w-4 text-primary" />
-                    )}
-                  </div>
-                  <div
-                    className={cn(
-                      'rounded-xl px-3 py-2 max-w-[80%]',
-                      msg.role === 'assistant'
-                        ? 'bg-muted/50'
-                        : 'bg-primary text-primary-foreground'
-                    )}
-                  >
-                    <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
-                    {msg.timestamp && (
-                      <p className="text-[10px] mt-1 opacity-60">
-                        {format(msg.timestamp, 'PPp')}
-                      </p>
-                    )}
+                  <div className={cn(
+                    "rounded-lg px-4 py-2 max-w-[80%]",
+                    msg.role === 'user' 
+                      ? 'bg-primary text-primary-foreground' 
+                      : 'bg-muted text-muted-foreground'
+                  )}>
+                    <p className="text-sm">{msg.content}</p>
                   </div>
                 </div>
               ))}
-              {isSending && (
+              {isLoading && (
                 <div className="flex gap-2 items-start">
                   <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
                     <Bot className="h-4 w-4 text-primary" />
@@ -335,10 +351,10 @@ export default function Home() {
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   placeholder="Type a message..."
-                  disabled={isSending}
+                  disabled={isLoading}
                 />
-                <Button type="submit" size="icon" disabled={!message.trim() || isSending}>
-                  {isSending ? (
+                <Button type="submit" size="icon" disabled={!message.trim() || isLoading}>
+                  {isLoading ? (
                     <div className="h-4 w-4 border-2 border-current border-t-transparent animate-spin rounded-full" />
                   ) : (
                     <Send className="h-4 w-4" />
